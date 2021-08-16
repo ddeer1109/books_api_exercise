@@ -1,3 +1,4 @@
+import db_populator
 from app import app
 from flask import Flask, render_template, url_for, request, jsonify, session, make_response, redirect
 
@@ -101,4 +102,10 @@ def api_get_by_id(id):
     query_result = DataManager.get_by_id(id=id)
     return query_result.serialize
 
+
+@app.route("/reset-db/<pin>")
+def reset_db(pin):
+    if pin == "1010":
+        db_populator.populate()
+    return redirect("/")
 
