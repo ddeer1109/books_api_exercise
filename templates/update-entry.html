@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as blocks %}
+{% block head %}
+
+    {{super()}}
+
+{% endblock %}
+{% block content %}
+    <h4>Update entry</h4>
+
+    {% if invalid_fields %}
+    <div>
+        {% for key, value in invalid_fields.items() %}
+            <p class="incorrect-input">Invalid <u>{{ key }}</u>: {{ value }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {{ blocks.generate_form(end_point='edit_entry', book=book) }}
+{% endblock %}

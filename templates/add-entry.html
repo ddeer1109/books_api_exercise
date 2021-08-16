@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+    {{super()}}
+
+{% endblock %}
+{% block content %}
+    <h4>Add new book</h4>
+    {% if invalid_fields %}
+    <div>
+        {% for key, value in invalid_fields.items() %}
+            <p class="incorrect-input">Invalid <u>{{ key }}</u>: {{ value }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <form id="add-entry" action="{{ url_for('add_entry') }}" method="post">
+
+        <div class="d-flex flex-column w-25">
+            <label for="title" class="form-label m-1" >Title</label>
+            <input class="w-10"id="title" name="title" type="text">
+
+            <label for="author" class="form-label m-1" >Author</label>
+            <input class="w-10"id="author" name="author" type="text">
+
+            <label for="isbn" class="form-label m-1" >ISBN</label>
+            <input class="w-10" id="isbn" name="isbn" type="text">
+
+            <label for="language" class="form-label m-1" >Language</label>
+            <input class="w-10"id="language" name="language" type="text">
+
+            <label for="pages_count" class="form-label m-1" >Pages count</label>
+            <input class="w-10"id="pages_count" name="pages_count" type="number">
+
+            <label for="publication_date" class="form-label m-1" >Publication date</label>
+            <input class="w-10"id="publication_date" name="publication_date" type="date" placeholder="YYYY-MM-DD">
+
+            <label for="link_to_cover_page" class="form-label m-1" >link_to_cover_page</label>
+            <input class="w-10"id="link_to_cover_page" name="link_to_cover_page" type="text">
+
+        </div>
+        <input class="btn btn-primary mt-2 mb-2 p-2" type="submit" value="Submit">
+
+    </form>
+
+{% endblock %}

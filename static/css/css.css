@@ -1,0 +1,11 @@
+.hidden {
+    display: none!important;
+}
+
+p.incorrect-input {
+    background-color: #ee9e9e;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    width:80%;
+}

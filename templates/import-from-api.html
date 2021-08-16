@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+    {{super()}}
+
+{% endblock %}
+{% block content %}
+    <form  action="{{ url_for('books_api_import_post') }}" method="post">
+        <h4>Import from Books' API filtered by:</h4>
+
+        <div class="d-flex flex-column w-25">
+            <label for="intitle:" class="form-label m-1" >Title</label>
+            <input class="w-10"id="intitle:" name="intitle:" type="text">
+
+            <label for="inauthor:" class="form-label m-1" >Author</label>
+            <input class="w-10"id="inauthor:" name="inauthor:" type="text">
+
+            <label for="isbn:" class="form-label m-1" >ISBN</label>
+            <input class="w-10" id="isbn:" name="isbn:" type="text">
+
+            <label for="subject:" class="form-label m-1" >Subject</label>
+            <input class="w-10" id="subject:" name="subject:" type="text">
+
+            <label for="inpublisher:" class="form-label m-1" >Publisher</label>
+            <input class="w-10" id="inpublisher:" name="inpublisher:" type="text">
+
+        </div>
+        <input class="btn btn-primary mt-2 mb-2 p-2" type="submit" value="Submit">
+
+    </form>
+
+{% endblock %}
