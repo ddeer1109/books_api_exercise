@@ -22,11 +22,15 @@ def json_response(func):
 
 
 def parse_date(string_input):
-    print(string_input)
+    if "T" in string_input:
+        string_input = string_input.split("T")[0]
+
     date_elements = list(map(int, string_input.split("-")))
+
     year = date_elements[YEAR]
     month = date_elements[MONTH] if len(date_elements) == 2 else 1
     day = date_elements[DAY] if len(date_elements) == 3 else 1
+
     return date(year, month, day)
 
 
