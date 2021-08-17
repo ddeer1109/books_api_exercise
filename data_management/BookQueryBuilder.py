@@ -24,7 +24,7 @@ class BookQueryBuilder:
         return self
 
     def filter_by_published_to(self, published_to=None):
-        self.query = self.query.filter(text(f"publication_date < '{published_to}'")) if published_to else self.query
+        self.query = self.query.filter(text(f"publication_date <= '{published_to}'")) if published_to else self.query
         return self
 
     def get_results(self):

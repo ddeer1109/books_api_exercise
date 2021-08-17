@@ -1,21 +1,21 @@
 import db_populator
 from app import app
-from flask import Flask, render_template, url_for, request, jsonify, session, make_response, redirect
+from flask import render_template, request, redirect
 
 from data_management.BooksApiRequest import BooksApiRequest
-from data_management.DataManager import DataManager
-from models.Book import Book
+from data_management.BooksDataManager import BooksDataManager
+
 from models.Constants import Status
 from models.FormDataValidator import FormDataValidator
 from util import util
 
-data_manager = DataManager()
+data_manager = BooksDataManager()
 
 
 @app.route("/")
 def get_all_records():
 
-    records = DataManager.get_books_by_filters(
+    records = BooksDataManager.get_by_filters(
         title=request.args.get('title'),
         author=request.args.get('author'),
         language=request.args.get('language'),
@@ -36,33 +36,33 @@ def add_entry():
     validator = FormDataValidator(dict(request.form))
 
     if validator.is_data_valid():
-        DataManager.add_entry(dict(request.form))
+        BooksDataManager.add(dict(request.form))
         return redirect("/")
     else:
         return render_template("add-entry.html",
-                               invalid_fields=validator.invalid_fields)
+                               invalid_fields=validator.invalid_fields_info)
 
 
-@app.route("/edit/<id>")
-def view_edit_entry(id):
-    book = Book.query.filter(Book.id == id).one()
+@app.route("/edit/<book_id>")
+def view_edit_entry(book_id):
+    book = BooksDataManager.get_by_id(book_id)
     return render_template("update-entry.html", book=book)
 
 
-@app.route("/edit/<id>", methods=["POST"])
-def edit_entry(id):
+@app.route("/edit/<book_id>", methods=["POST"])
+def edit_entry(book_id):
 
     validator = FormDataValidator(dict(request.form), update_data=True)
 
     if validator.is_data_valid():
-        status = DataManager.update_entry(id, dict(request.form))
+        status = BooksDataManager.update(book_id, dict(request.form))
 
         if status == Status.OK:
             return redirect("/")
 
     return render_template("update-entry.html",
-                           book=Book.query.filter(Book.id == id).one(),
-                           invalid_fields=validator.invalid_fields)
+                           book=BooksDataManager.get_by_id(book_id),
+                           invalid_fields=validator.invalid_fields_info)
 
 
 @app.route("/import")
@@ -73,10 +73,12 @@ def books_api_import_view():
 @app.route("/import", methods=["POST"])
 def books_api_import_post():
     passed_attributes = util.filter_out_empty_dict_entries((dict(request.form)))
+
     request_api = BooksApiRequest(params_dict=passed_attributes)
     request_api.send_request(request_options={"maxResults": 40})
     books = request_api.get_mapped_results()
-    DataManager.add_entries(books)
+
+    BooksDataManager.add_entries(books)
     return redirect("/")
 
 
@@ -84,7 +86,7 @@ def books_api_import_post():
 @util.json_response
 def api_get():
 
-    query_result = DataManager.get_books_by_filters(
+    query_result = BooksDataManager.get_by_filters(
         title=request.args.get('title'),
         author=request.args.get('author'),
         language=request.args.get('language'),
@@ -95,11 +97,11 @@ def api_get():
     return {"items_count": len(query_result), "results": [i.serialize for i in query_result]}
 
 
-@app.route("/books/<id>")
+@app.route("/books/<book_id>")
 @util.json_response
-def api_get_by_id(id):
+def api_get_by_id(book_id):
 
-    query_result = DataManager.get_by_id(id=id)
+    query_result = BooksDataManager.get_by_id(id=book_id)
     return query_result.serialize
 
 

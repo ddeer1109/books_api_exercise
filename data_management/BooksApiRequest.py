@@ -1,5 +1,3 @@
-import os
-
 import requests
 
 from models.Book import Book
@@ -32,16 +30,16 @@ class BooksApiRequest:
         for key in input_data:
             self.query += f"{self.query}{key}:{input_data.get(key)}&"
 
-    def build_query_uri(self):
-        return self.__VOLUMES_QUERYING_LINK + self.query
-
-    def send_request(self, request_options=None):
-        uri = self.build_query_uri()
-
+    def build_query_uri(self, request_options=None):
+        basic_query = self.__VOLUMES_QUERYING_LINK + self.query
         if request_options:
             options_queries = "".join([f"{key}={request_options.get(key)}&" for key in request_options])
-            uri = uri + options_queries
+            return basic_query + options_queries
 
+        return basic_query
+
+    def send_request(self, request_options=None):
+        uri = self.build_query_uri(request_options)
         books_request = requests.get(uri, headers=self.headers)
         self.result = books_request.json()['items']
 
@@ -56,8 +54,36 @@ class BooksApiRequest:
 
         return books
 
+    def map_json_volume_data_to_book(self, volume_data):
+
+        title = \
+            volume_data.get(self.title_api, self.NOT_FOUND)
+        author = \
+            volume_data.get(self.author_api, self.NOT_FOUND)
+        published_date = \
+            volume_data.get(self.publication_date_api, self.NOT_FOUND)
+        pages_count = \
+            volume_data.get(self.pages_count_api, self.NOT_FOUND)
+        language = \
+            volume_data.get(self.language_api, self.NOT_FOUND)
+
+        isbn = self.get_isbn_from_volume_entry(volume_data)
+        cover_page_link = BooksApiRequest.link_to_cover_page_api(volume_data)
+
+        if self.NOT_FOUND not in [title, author, published_date, isbn]:
+            return Book(
+                title=title,
+                author=", ".join(author) if len(author) > 1 else "".join(author),
+                publication_date=util.parse_date(published_date),
+                isbn=isbn,
+                link_to_cover_page=cover_page_link,
+                pages_count=pages_count,
+                language=language
+            )
+
     def get_isbn_from_volume_entry(self, entry):
         identifiers_section = entry.get(self.isbn_api, [])
+
         find_isbn = lambda identifier: identifier.get("identifier") \
             if identifier.get("type") in ["ISBN_10", "ISBN_13"] else self.NOT_FOUND
 
@@ -74,26 +100,3 @@ class BooksApiRequest:
                 return isbn
 
         return self.NOT_FOUND
-
-    def map_json_volume_data_to_book(self, volume_data):
-
-        title = volume_data.get(self.title_api, self.NOT_FOUND)
-        author = volume_data.get(self.author_api, self.NOT_FOUND)
-        published_date = volume_data.get(self.publication_date_api, self.NOT_FOUND)
-        pages_count = volume_data.get(self.pages_count_api, self.NOT_FOUND)
-        isbn = self.get_isbn_from_volume_entry(volume_data)
-        cover_page_link = BooksApiRequest.link_to_cover_page_api(volume_data)
-        language = volume_data.get(self.language_api, self.NOT_FOUND)
-
-        if self.NOT_FOUND not in [title, author, published_date, isbn]:
-            return Book(
-                    title=title,
-                    author=", ".join(author) if len(author) > 1 else "".join(author),
-                    publication_date=util.parse_date(published_date),
-                    isbn=isbn,
-                    link_to_cover_page=cover_page_link,
-                    pages_count=pages_count,
-                    language=language
-            )
-
-
