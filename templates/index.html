@@ -43,7 +43,7 @@
                         href="{{ data.link_to_cover_page }}">
                         <img src="{{ data.link_to_cover_page }}" alt="cover page">
                 </a></td>
-                <td><a href="{{ url_for('view_edit_entry', id=data.id) }}">Edit</a></td>
+                <td><a href="{{ url_for('view_edit_entry', book_id=data.id) }}">Edit</a></td>
             </tr>
         {% endfor %}
     </table>

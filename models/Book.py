@@ -2,6 +2,9 @@ from app import db
 
 
 class Book(db.Model):
+    """
+    Main program model. Based on this there are DB entities.
+    """
     __tablename__ = 'books'
 
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True, nullable=False)

@@ -3,6 +3,9 @@ from sqlalchemy import text
 
 
 class BookQueryBuilder:
+    """
+    Builder class which helps to chain different search filters and to return final result.
+    """
     def __init__(self) -> None:
         self.query = Book.query
 

@@ -14,6 +14,14 @@ VALID_ISBN_LENGTHS = [10, 13]
 
 
 class FormDataValidator:
+    """
+    Class responsible for validating insert or update data from form packed as dictionary.
+
+    Flag update_data set on True:
+        - makes content validation only on fields which aren't null and which have specific requirements.
+    On false:
+        - makes non_null validation on required fields and then content validation as above
+    """
     def __init__(self, dict_data, update_data=False) -> None:
         self.form_data = dict_data
         self.is_update_data = update_data
@@ -22,19 +30,21 @@ class FormDataValidator:
 
     def validate_data(self):
         if self.is_update_data:
-            self.validate_update()
+            self.validate_fields_content()
         else:
             self.validate_insert()
 
     def validate_insert(self):
         self.validate_non_null_fields()
-        self.validate_update()
+        self.validate_fields_content()
 
-    def validate_update(self):
+    def validate_fields_content(self):
         if self.form_data.get(Columns.pages_count):
             self.validate_pages_count()
+
         if self.form_data.get(Columns.publication_date):
             self.validate_publication_date()
+
         if self.form_data.get(Columns.isbn):
             self.validate_isbn()
 

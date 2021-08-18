@@ -1,5 +1,8 @@
 from unittest import TestCase
 
+from Configuration import Configuration
+from app import app
+
 import db_populator
 from data_management.BooksDataManager import BooksDataManager
 from models.Book import Book
@@ -9,6 +12,7 @@ from util.util import convert_publication_date
 
 class TestBooksDataManager(TestCase):
     def setUp(self) -> None:
+        app.config['SQLALCHEMY_DATABASE_URI'] = Configuration.sqlalchemy_test_db
         db_populator.populate()
         self.start_items_count = Book.query.count()
 

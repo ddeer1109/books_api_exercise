@@ -5,6 +5,9 @@ from util import util
 
 
 class BooksApiRequest:
+    """
+    Class responsible for requesting Google Books API
+    """
     __VOLUMES_LINK = "https://www.googleapis.com/books/v1/volumes"
     __VOLUMES_QUERYING_LINK = "https://www.googleapis.com/books/v1/volumes?q="
     NOT_FOUND = "Unknown"
@@ -26,11 +29,21 @@ class BooksApiRequest:
     result = None
 
     def __init__(self, params_dict=None, **kwargs):
+        """
+        Builds query part of request link
+        :param params_dict:
+        :param kwargs:
+        """
         input_data = params_dict if params_dict else kwargs
         for key in input_data:
             self.query += f"{self.query}{key}:{input_data.get(key)}&"
 
     def build_query_uri(self, request_options=None):
+        """
+
+        :param request_options:
+        :return query uri with options attributes or without:
+        """
         basic_query = self.__VOLUMES_QUERYING_LINK + self.query
         if request_options:
             options_queries = "".join([f"{key}={request_options.get(key)}&" for key in request_options])
@@ -39,11 +52,17 @@ class BooksApiRequest:
         return basic_query
 
     def send_request(self, request_options=None):
+        """
+        sends request to previously build uri and sets result property
+        """
         uri = self.build_query_uri(request_options)
         books_request = requests.get(uri, headers=self.headers)
         self.result = books_request.json()['items']
 
     def get_mapped_results(self):
+        """
+        :return results mapped to Book objects:
+        """
         books = []
         for entry in self.result:
             volume_data = entry.get("volumeInfo")
@@ -55,7 +74,11 @@ class BooksApiRequest:
         return books
 
     def map_json_volume_data_to_book(self, volume_data):
-
+        """
+        map correct volume data (with all neccesary fields found) to Book object
+        :param volume_data:
+        :return:
+        """
         title = \
             volume_data.get(self.title_api, self.NOT_FOUND)
         author = \
@@ -82,6 +105,11 @@ class BooksApiRequest:
             )
 
     def get_isbn_from_volume_entry(self, entry):
+        """
+        Gets isbn from JSON/dict object
+        :param entry:
+        :return str:
+        """
         identifiers_section = entry.get(self.isbn_api, [])
 
         find_isbn = lambda identifier: identifier.get("identifier") \
