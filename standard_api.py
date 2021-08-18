@@ -9,8 +9,6 @@ from models.Constants import Status
 from models.FormDataValidator import FormDataValidator
 from util import util
 
-data_manager = BooksDataManager()
-
 
 @app.route("/")
 def get_all_records():

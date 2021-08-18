@@ -31,12 +31,10 @@ class BooksDataManager:
     def get_by_id(id):
         return Book.query.filter(Book.id == id).first()
 
-
     @staticmethod
     def add(dict_data):
         util.convert_publication_date(dict_data)
         book = Book.build_from_form_dictionary(dict_data)
-        print(book)
         db.session.add(book)
         db.session.commit()
 
@@ -50,7 +48,6 @@ class BooksDataManager:
             return 1
         except sqlalchemy.exc.IntegrityError:
             return -1
-
 
     @staticmethod
     def add_entries(books_list):

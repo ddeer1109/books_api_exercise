@@ -12,7 +12,7 @@ def populate():
     try:
         book = Book(title="Stary czlowiek i morze",
                     author="Ernest Hemingway",
-                    publication_date=date(2000,11,11),
+                    publication_date=date(2000, 11, 11),
                     isbn="1234-1234-1234-1235",
                     pages_count=150,
                     link_to_cover_page="asd.pl",

@@ -39,5 +39,6 @@ def filter_out_empty_dict_entries(dictionary):
 
 
 def convert_publication_date(dict_data):
-    if dict_data.get(Columns.publication_date) not in [None, ""]:
+    publication_date = dict_data.get(Columns.publication_date)
+    if publication_date not in [None, ""] and type(publication_date) is not date:
         dict_data[Columns.publication_date] = parse_date(dict_data.get(Columns.publication_date))
