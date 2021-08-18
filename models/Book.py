@@ -29,16 +29,19 @@ class Book(db.Model):
 
     @staticmethod
     def build_from_form_dictionary(dictionary):
-
-       return Book(
-            title=dictionary.get("title"),
-            author=dictionary.get("author"),
-            publication_date=dictionary.get("publication_date"),
-            isbn=dictionary.get("isbn"),
-            pages_count=dictionary.get("pages_count"),
-            link_to_cover_page=dictionary.get("link_to_cover_page"),
-            language=dictionary.get("language"),
-    )
+        # return Book(
+        #      title=dictionary.get("title"),
+        #      author=dictionary.get("author"),
+        #      publication_date=dictionary.get("publication_date"),
+        #      isbn=dictionary.get("isbn"),
+        #      pages_count=dictionary.get("pages_count"),
+        #      link_to_cover_page=dictionary.get("link_to_cover_page"),
+        #      language=dictionary.get("language"),
+        #  )
+        book = Book()
+        for key, value in dictionary.items():
+            setattr(book, key, value)
+        return book
 
     @property
     def serialize(self):
